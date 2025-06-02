@@ -9,7 +9,9 @@ Hướng dẫn chạy:
 3. Các file còn lại giữ nguyên
   
 4. Ảnh ví dụ:
+
 ![vidu](https://github.com/user-attachments/assets/225bf5d2-edd1-4592-be23-3ab938a4b734)
 
-5. Nếu chạy bằng Visual Studio Code, hãy open folder lên, chọn file home.html, open with liveserver, nếu không có hãy cài extension sau:
+6. Nếu chạy bằng Visual Studio Code, hãy open folder lên, chọn file home.html, open with liveserver, nếu không có hãy cài extension sau:
+
 ![vidu2](https://github.com/user-attachments/assets/7827778c-a5e2-4c30-811f-6b01942fdb51)
