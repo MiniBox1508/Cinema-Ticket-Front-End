@@ -1,0 +1,68 @@
+/* Kiểu dáng cho bảng rạp chiếu phim */
+/*.cinema_table {
+    width: 68%;
+    height: 80%;
+    margin: 20px auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 8px;
+    position: relative;
+}
+*/
+.cinema_table {
+    width: 67%;
+    height: 80%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 8px;
+    position: absolute;
+    top: 60%;
+    left: 37.2%;
+    transform: translate(-50%, -50%);
+}
+
+.cinema_table table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+    background: rgb(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.cinema_table table th,
+.cinema_table table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cinema_table table th {
+    background: rgb(255, 255, 255, 0.3);
+    font-weight: 800;
+    font-family: 'Be Vietnam Pro';
+}
+
+.cinema_table table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Ẩn giao diện thanh cuộn */
+.cinema_table::-webkit-scrollbar {
+    width: 5px;
+    background: transparent;
+    visibility: hidden;
+}
+
+.cinema_table::-webkit-scrollbar-thumb {
+    background: rgb(255, 255, 255, .3);
+    border-radius: 5px;
+    visibility: hidden;
+}
+
+.cinema_table:hover::-webkit-scrollbar {
+    visibility: hidden;
+}
+
+.cinema_table:hover::-webkit-scrollbar-thumb {
+    visibility: hidden;
+}

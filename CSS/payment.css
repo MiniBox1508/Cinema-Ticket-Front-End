@@ -1,0 +1,181 @@
+/* Container chứa hai bảng */
+.tables_container {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin: 20px auto;
+    height: 80%;
+}
+
+/* Bảng bên trái: Danh sách vé */
+    .ticket_table {
+        position: absolute;
+        width: 40%;
+        height: 72.7%;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 10px;
+        padding: 20px;
+        overflow: hidden;
+        left: 3.3%; /* Cách mép trái 5% chiều rộng màn hình */
+        top: 17%; /* Cách mép trên 10% chiều cao màn hình */
+    }
+
+/* Danh sách vé với thanh cuộn ẩn */
+.ticket_list {
+    max-height: 90%;
+    overflow-y: auto;
+}
+.ticket_list::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+.ticket_list::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+/* Thiết kế vé giống hình chiếc vé */
+.ticket_card {
+    width: 90%;
+    height: 40%;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    margin: 10px auto;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-left: 5px solid rgb(47, 142, 173);
+    border-right: 5px solid rgb(47, 142, 173);
+    position: relative;
+}
+.ticket_card::before, .ticket_card::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: rgb(45, 45, 45);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.ticket_card::before {
+    left: -10px;
+}
+.ticket_card::after {
+    right: -10px;
+}
+
+/* Checkbox và thông tin vé */
+.ticket_checkbox {
+    position: absolute;
+    left: 6%; /* Cách mép trái của .ticket_card 5% */
+    top: 45%; /* Căn giữa theo chiều dọc */
+    transform: scale(2.1); /* Căn giữa và tăng kích cỡ 1.5 lần */
+    margin-right: 0; /* Bỏ margin mặc định để tránh lệch */
+    /*margin-right: 10px;*/
+}
+
+/* Checkbox và thông tin vé */
+
+.ticket_info {
+    position: relative;
+    left: 14%; /* Cách mép trái 15% để tránh chồng lấn checkbox */
+    top: 0%; /* Cách mép trên 10% */
+    color: white;
+}
+.ticket_info h3 {
+    position: relative;
+    font-size: 16px;
+    margin-bottom: 5px;
+    top: 0%; /* Cách mép trên 10% */
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+.ticket_info p {
+    position: relative;
+    font-size: 14px;
+    margin: 3px 0;
+    top: 50%;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+/* Hộp thông báo số vé được chọn */
+.notification_box {
+    color: white;
+    font-size: 17px;
+    text-align: center;
+    margin-top: 25px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+
+
+
+
+
+
+
+/* Bảng bên phải: Thông tin thanh toán */
+.payment_table {
+    position: relative;
+    width: 20%;
+    height: 42.5%;
+    background: rgba(0, 0, 0, 0.86);
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    left: 65%; /* Cách mép trái 5% chiều rộng màn hình */
+    top: 20%; /* Cách mép trên 10% chiều cao màn hình */
+}
+.payment_table h3 {
+    position: relative;
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+    top: -4%; /* Cách mép trên 10% chiều cao màn hình */
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+.payment_info p {
+    font-size: 16px;
+    margin: 13px 0;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+.payment_info select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    background: rgb(255, 255, 255, .3);
+    color: white;
+    border: none;
+    outline: none;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    margin-top: 13px; /* Khoảng cách với phần tử phía trên */
+}
+.payment_info select option {
+    background: rgb(45, 45, 45);
+}
+
+
+/* Clickbox Hoàn thành */
+.complete_button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.43);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    transition: background 0.3s ease;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+.complete_button:hover {
+    background: #1e60c2; /* Màu xanh nước biển */
+}
+.complete_button .arrow_icon {
+    margin-left: 12px;
+    font-size: 20px;
+}

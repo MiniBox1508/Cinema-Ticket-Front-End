@@ -1,0 +1,243 @@
+/* Khung chứa các select box */
+.select-boxes-frame {
+    position: relative;
+    width: 21%;
+    margin-left: 50px; /* Căn lề trái giống logo */
+    margin-top: 9vh; /* Lùi xuống 20% chiều cao màn hình */
+    display: flex;
+    flex-direction: column;
+    gap: 36px; /* Khoảng cách giữa các select box */
+    z-index: 0;
+}
+
+/* Container cho mỗi select box */
+.select-box-container {
+    position: relative;
+    width: 100%;
+}
+
+/* Lớp nền mờ tương tự search card */
+.select-box-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgb(255, 255, 255, 0.25);
+    border-radius: 6px;
+    backdrop-filter: blur(5px);
+    z-index: -1;
+}
+
+/* Kiểu dáng cho tiêu đề */
+.select-label {
+    display: block;
+    color: white;
+    font-size: 16px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 600;
+    margin-top: 2px; /* Lề trên 2px */
+    margin-bottom: 2px; /* Lề dưới 2px */
+    padding: 10px;
+    /*text-transform: uppercase;*/
+}
+
+/* Kiểu dáng cho select box */
+.select-box-container select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 500;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    margin-top: 2px; /* Lề trên 2px */
+    margin-bottom: 2px; /* Lề dưới 2px */
+}
+
+/* Kiểu dáng cho các option trong select */
+.select-box-container select option {
+    background: rgb(45, 45, 45);
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 16px;
+}
+
+/* Tùy chỉnh mũi tên của select box */
+.select-box-container::after {
+    content: '\25BC';
+    position: absolute;
+    right: 10px;
+    top: calc(50% + 22px); /* Điều chỉnh vị trí do có tiêu đề */
+    transform: translateY(-50%);
+    color: white;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+/* Hiệu ứng hover cho select box */
+.select-box-container select:hover {
+    background: rgb(255, 255, 255, .2);
+}
+
+/*Lưới ghế*/
+.seat-grid {
+    width: 60%;
+    height: 86%;
+    margin: 20px auto;
+    background: rgb(0, 0, 0, 0.9);
+    border-radius: 20px;
+    display: grid;
+    align-content: start;
+    grid-template-columns: 20px repeat(10, 1fr); /* Cột đầu tiên cho nhãn hàng, 10 cột cho ghế*/
+    grid-template-rows: repeat(9, 0.1fr); // 9 hàng (A-I) 
+    padding: 10px;
+    position: absolute;
+    transform: translate(50px, -100px);
+    top: 21%; /*Dịch lên trên, cách đỉnh 5% chiều cao header */
+    left: 27.5%; /*Dịch sang phải, cách trái 15% chiều rộng header */
+    z-index: 1;
+}
+
+/* Nhãn hàng (A-I) */
+.seat-grid .row-label {
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*transform: translate(-0.5px, -22px);
+    letter-spacing: -2px;
+    */
+    margin: 0; /* Loại bỏ margin thừa */
+    padding: 0; /* Loại bỏ padding thừa */
+    transform: translate(9px, -25px); /* Xóa dịch chuyển */
+    letter-spacing: -2px; /* Giữ nguyên, dù không ảnh hưởng */
+}
+
+/* Nhãn cột (1-10) */
+.seat-grid .col-label {
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(5px, -9px);
+}
+
+/* Ô ghế */
+.seat-grid .seat {
+    background: rgb(255, 255, 255, 0.2);
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    cursor: pointer;
+    position: relative;
+    transform: translate(20px, -17px);
+    height: 40px; /* Giảm chiều cao ô ghế */
+    width: 60px; /* Giảm chiều rộng ô ghế */
+}
+
+/* Icon ghế */
+.seat-grid .seat::before {
+    content: '\F66C'; /* Icon ghế từ Bootstrap Icons (bi-armchair) */
+    font-family: 'bootstrap-icons';
+    font-size: 16px;
+    position: absolute;
+    top: 4px;
+    display: block;
+}
+
+/* Mã ghế */
+.seat-grid .seat span {
+    position: absolute;
+    bottom: 1px;
+}
+
+/* Hiệu ứng hover */
+.seat-grid .seat:hover {
+    background: rgb(0, 105, 148); /* Xanh nước biển */
+}
+
+/* Ghế được chọn */
+.seat-grid .seat.selected {
+    background: rgb(255, 0, 0); /* Đỏ */
+}
+
+/* Thông báo lỗi */
+.seat-grid .seat-error-message {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgb(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none;
+    z-index: 1000;
+}
+
+/* Thông báo số lượng ghế */
+.seat-grid .seat-selection-info {
+    position: absolute;
+    bottom: 18px;
+    right: 11px;
+    background: rgb(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 16px;
+    z-index: 1000;
+}
+
+/* Nút thanh toán */
+.seat-selection-info .payment-button {
+    position: absolute;
+    left: -778px; /* Sát trái */
+    bottom: -2px; /* Sát dưới */
+    width: 120px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    color: white;
+    font-family: 'cc', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    z-index: 1010;
+    padding: 2px 4px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.seat-selection-info .payment-button i {
+    margin-left: 8px;
+    font-size: 15px;
+}
+
+/* Hover nút thanh toán */
+.seat-selection-info .payment-button:hover {
+    background: rgb(0, 105, 255);
+}

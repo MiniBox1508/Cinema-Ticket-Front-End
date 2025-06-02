@@ -1,0 +1,196 @@
+
+/*nút điều hướng trái và phải*/
+header section .bi-chevron-left , .bi-chevron-right{
+    position: absolute;
+    top: 50%;
+    left: 3%;
+    width: 25px;
+    height: 25px;
+    background: rgb(255, 255, 255, .3);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    transition: .3s linear;
+    z-index: 9999999;
+    opacity:0;
+}
+header section .bi-chevron-right{
+    left: unset;
+    right: 3%;
+
+}
+header section:hover .bi-chevron-right{
+    opacity: 1;
+}
+header section:hover .bi-chevron-left{
+    opacity: 1;
+}
+
+/*nội dung chính của trang web*/
+header .content{
+    position: relative;
+    color: white;
+    margin-top : 60px;
+    padding-left: 50px;
+    line-height: 15px;
+}
+header .content h1{
+    font-size: 50px;
+ 
+}
+header .content p{
+    padding-top: -10px;
+    font-size: 12px;
+    width: 350px;
+    word-break: break-all;
+}
+header .content .details{
+    display: flex;
+    align-items: center;
+}
+header .content .details h6{
+    color: rgb(255, 255, 255, .8);
+    font-size: 10px;
+    margin-right: 10px;
+}
+
+header .content .details h5{
+    color: rgb(142,230,48);
+    font-size: 10px;
+    margin-right: 10px;
+}
+
+header .content .details h4{
+    color: white;
+    font-size: 10px;
+    margin-right: 10px;
+}
+
+header .content .details h3{
+    color:white;
+    display: flex;
+    font-size: 10px;
+    align-items: center;
+    margin-right: 10px;
+}
+header .content .details h3 span{
+    background-color: yellow;
+    color: black;
+    padding: 0px 2px 0px 2px; 
+    margin: 0px 3px 0px 1px;
+}
+header .content .details h3 i{
+    margin-right:3px;
+}
+
+/*phần thẻ cuộng ngang chứa các poster phim*/
+header section{
+    position: absolute;
+    width: 91.5%;
+    height: auto;
+    padding: 0px 50px;
+    bottom: 20px;
+    color: white;
+}
+header section .cards{
+    position: relative;
+    width: 100%;
+    height: 200px;
+    margin-top: 10px;
+    padding: 12px;
+    display: flex;
+    align-items: center; 
+    overflow-x: auto;
+    scroll-behavior: smooth;
+}
+header section .cards::-webkit-scrollbar{
+    display: none;
+}
+
+header section .cards .card{
+    position: relative;
+    min-width: 130px;
+    height: 180px;
+    border-radius: 8px;
+    margin-right: 10px;
+    transition: .3s linear;
+
+}   
+header section .cards .card .poster{
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    position: relative;
+}
+header section .cards .card:hover{
+    min-width: 150px;
+ 
+}
+header section .cards .card .rest_card{
+    position: absolute;
+    width: 180%;
+    height: 100%;
+    border-radius: 8px;
+    left: 0;
+    top: 0;
+    z-index: 99999;
+    opacity: 0;
+    transition: 0.3s linear;
+}
+header section .cards .card .rest_card img{
+    position: relative;
+    width:100%;
+    height: 100%;
+    border-radius: 8px;
+    z-index: -1;
+}
+header section .cards .card .rest_card::after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 4%;
+    background: linear-gradient(180deg,transparent,rgb(0, 0, 0));
+    left: 0;
+    bottom: 0;
+    z-index: -1;
+}
+ header section .cards .card .rest_card .cont{
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
+    left: 0;
+    color: #fff;
+    padding: 0px 15px ;
+    font-size: 10px;
+}
+header section .cards .card .rest_card .cont .sub{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right:25px ;
+    font-size: 8px;
+}
+header section .cards .card .rest_card .cont .sub p{
+    font-weight: 400;
+    font-size: 13px;
+    color: rgb(255, 255, 255, .7);
+}
+header section .cards .card .rest_card .cont .sub h3{
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
+header section .cards .card .rest_card .cont .sub h3 span{
+    background-color: yellow;
+    color: black;
+    padding: 0px 2px 0px 2px; 
+    margin: 0px 3px 0px 1px;
+}
+header section .cards .card:hover .rest_card{
+    opacity: 1;
+}
