@@ -1,17 +1,39 @@
 # Cinema-Ticket-Front-End
 Front-End for Cinema Ticket website
 
-Hướng dẫn chạy:
-1. Tải hết các file về, bỏ vào một thư mục để tên bất kì, lấy tất cả các file từ 3 thư mục CSS, HTML và JavaScript bỏ ra ngoài và xóa 3 thư mục đó đi
+## Hướng dẫn cài đặt và chạy chương trình
 
-2. Tải các file video và bỏ vào thư mục video
-  
-3. Các file còn lại giữ nguyên
-  
-4. Ảnh ví dụ:
+### Bước 1: Tải source code
+- Clone hoặc tải source code về máy
+- Giải nén nếu tải file zip
 
-![vidu](https://github.com/user-attachments/assets/225bf5d2-edd1-4592-be23-3ab938a4b734)
+### Bước 2: Cấu trúc thư mục
+- Tải các file video và đặt vào thư mục `video`
+- Giữ nguyên các file và thư mục còn lại
+- Cấu trúc thư mục sau khi hoàn thành:
+```
+Cinema-Ticket-Project/
+├── video/
+│   └── [các file video]
+├── css/
+├── js/
+├── images/
+└── home.html
+```
 
-5. Nếu chạy bằng Visual Studio Code, hãy open folder lên, chọn file home.html, open with liveserver, nếu không có hãy cài extension sau:
-
+### Bước 3: Cài đặt Visual Studio Code
+- Tải và cài đặt [Visual Studio Code](https://code.visualstudio.com/)
+- Cài đặt extension Live Server:
 ![vidu2](https://github.com/user-attachments/assets/7827778c-a5e2-4c30-811f-6b01942fdb51)
+
+### Bước 4: Chạy chương trình
+1. Mở Visual Studio Code
+2. Chọn File > Open Folder > Chọn thư mục Cinema-Ticket-Project
+3. Trong explorer bên trái, tìm và click chuột phải vào file `home.html`
+4. Chọn "Open with Live Server"
+5. Trình duyệt sẽ tự động mở và chạy website
+
+### Cấu hình yêu cầu
+- Trình duyệt web hiện đại (Chrome, Firefox, Edge...)
+- Visual Studio Code với extension Live Server
+- Kết nối internet để load các thư viện
