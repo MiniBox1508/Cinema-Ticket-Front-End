@@ -15,10 +15,10 @@ Front-End for Cinema Ticket website
 Cinema-Ticket-Project/
 ├── video/
 │   └── [các file video]
-├── css/
-├── js/
-├── images/
-└── home.html
+├── CSS/
+├── JavaScript/
+├── img/
+└── HTML/
 ```
 
 ### Bước 3: Cài đặt Visual Studio Code
