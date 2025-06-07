@@ -1,68 +1,82 @@
-const RoomModel = require('../models/roomModel');
+const { sql } = require('../config/db');
 
 // Lấy danh sách tất cả các phòng
 const getAllRooms = async (req, res) => {
     try {
-        const rooms = await RoomModel.getAll();
-        res.status(200).json(rooms);
+        const result = await sql.query`SELECT * FROM Room`;
+        res.json(result.recordset);
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch rooms', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
 // Lấy thông tin phòng theo ID
 const getRoomById = async (req, res) => {
-    const { id } = req.params;
     try {
-        const room = await RoomModel.getById(id);
-        if (!room) {
-            return res.status(404).json({ message: 'Room not found' });
+        const result = await sql.query`
+            SELECT * FROM Room WHERE RoomID = ${req.params.id}`;
+        if (result.recordset.length > 0) {
+            res.json(result.recordset[0]);
+        } else {
+            res.status(404).json({ message: 'Không tìm thấy phòng' });
         }
-        res.status(200).json(room);
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch room', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
 // Thêm một phòng mới
 const createRoom = async (req, res) => {
-    const { TotalSeat, Name, TheaterId } = req.body;
-    const room = { TotalSeat, Name, TheaterId };
+    const { name, capacity, theaterId } = req.body;
     try {
-        const result = await RoomModel.create(room);
-        res.status(201).json({ message: 'Room created successfully', roomId: result.insertId });
+        const result = await sql.query`
+            INSERT INTO Room (Name, Capacity, TheaterId) 
+            VALUES (${name}, ${capacity}, ${theaterId});
+            SELECT SCOPE_IDENTITY() AS RoomID;
+        `;
+        res.status(201).json({ 
+            message: 'Tạo phòng thành công', 
+            roomId: result.recordset[0].RoomID 
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to create room', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
 // Cập nhật thông tin phòng
 const updateRoom = async (req, res) => {
-    const { id } = req.params;
-    const { TotalSeat, Name, TheaterId } = req.body;
-    const room = { TotalSeat, Name, TheaterId };
+    const { name, capacity, theaterId } = req.body;
     try {
-        const result = await RoomModel.update(id, room);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Room not found' });
+        const result = await sql.query`
+            UPDATE Room 
+            SET Name = ${name}, 
+                Capacity = ${capacity}, 
+                TheaterId = ${theaterId} 
+            WHERE RoomID = ${req.params.id}
+        `;
+        if (result.rowsAffected[0] > 0) {
+            res.json({ message: 'Cập nhật phòng thành công' });
+        } else {
+            res.status(404).json({ message: 'Không tìm thấy phòng' });
         }
-        res.status(200).json({ message: 'Room updated successfully' });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to update room', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
 // Xóa một phòng
 const deleteRoom = async (req, res) => {
-    const { id } = req.params;
     try {
-        const result = await RoomModel.delete(id);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Room not found' });
+        const result = await sql.query`
+            DELETE FROM Room WHERE RoomID = ${req.params.id}
+        `;
+        if (result.rowsAffected[0] > 0) {
+            res.json({ message: 'Xóa phòng thành công' });
+        } else {
+            res.status(404).json({ message: 'Không tìm thấy phòng' });
         }
-        res.status(200).json({ message: 'Room deleted successfully' });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to delete room', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
@@ -71,5 +85,5 @@ module.exports = {
     getRoomById,
     createRoom,
     updateRoom,
-    deleteRoom,
+    deleteRoom
 };

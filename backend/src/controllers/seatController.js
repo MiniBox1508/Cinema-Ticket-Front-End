@@ -29,9 +29,12 @@ const createSeat = async (req, res) => {
     const { SeatNumber, Line, RoomId } = req.body;
     try {
         const result = await SeatModel.create({ SeatNumber, Line, RoomId });
-        res.status(201).json({ message: 'Ghế đã được tạo thành công', seat: result });
+        res.status(201).json({ 
+            message: 'Tạo ghế thành công', 
+            seatId: result.SeatId 
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Không thể tạo ghế', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
@@ -41,12 +44,12 @@ const updateSeat = async (req, res) => {
     const { SeatNumber, Line, RoomId } = req.body;
     try {
         const result = await SeatModel.update(id, { SeatNumber, Line, RoomId });
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Ghế không tồn tại' });
+        if (!result) {
+            return res.status(404).json({ message: 'Không tìm thấy ghế' });
         }
-        res.status(200).json({ message: 'Cập nhật ghế thành công' });
+        res.json({ message: 'Cập nhật ghế thành công' });
     } catch (err) {
-        res.status(500).json({ error: 'Không thể cập nhật ghế', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 

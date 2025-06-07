@@ -25,14 +25,19 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
     const { Name, Password, Email, Phone, Role, CreateAt, Status } = req.body;
-
-    const hashedPassword = await bcrypt.hash(Password, 12);
-
     try {
-        const result = await UserModel.create({ Name, hashedPassword, Email, Phone, Role, CreateAt, Status });
-        res.status(201).json({ message: 'User created successfully', user: result });
+        const hashedPassword = await bcrypt.hash(Password, 12);
+        const result = await UserModel.create({ 
+            Name, hashedPassword, Email, Phone, 
+            Role, CreateAt: new Date(), Status 
+        });
+        res.status(201).json({ 
+            message: 'Tạo người dùng thành công',
+            userId: result.UserId 
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to create user', details: err });
+        console.error('Error creating user:', err);
+        res.status(500).json({ message: err.message });
     }
 };
 

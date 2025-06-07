@@ -1,78 +1,57 @@
-const db = require('../config/db');
+const { sql } = require('../config/db');
 
 const SeatModel = {
-    getAll: () => {
-        const query = 'SELECT * FROM Seats';
-        return new Promise((resolve, reject) => {
-            db.query(query, (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
+    getAll: async () => {
+        const result = await sql.query`SELECT * FROM Seats`;
+        return result.recordset;
     },
 
-    getById: (id) => {
-        const query = 'SELECT * FROM Seats WHERE SeatId = ?';
-        return new Promise((resolve, reject) => {
-            db.query(query, [id], (err, results) => {
-                if (err) return reject(err);
-                resolve(results[0]);
-            });
-        });
+    getById: async (id) => {
+        const result = await sql.query`
+            SELECT * FROM Seats WHERE SeatId = ${id}`;
+        return result.recordset[0];
     },
 
-    create: (seat) => {
-        const query = 'INSERT INTO Seats (SeatNumber, Line, RoomId) VALUES (?, ?, ?)';
+    create: async (seat) => {
         const { SeatNumber, Line, RoomId } = seat;
-        return new Promise((resolve, reject) => {
-            db.query(query, [SeatNumber, Line, RoomId], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
-    },
-
-    update: (id, seat) => {
-        const query = 'UPDATE Seats SET SeatNumber = ?, Line = ?, RoomId = ? WHERE SeatId = ?';
-        const { SeatNumber, Line, RoomId } = seat;
-        return new Promise((resolve, reject) => {
-            db.query(query, [SeatNumber, Line, RoomId, id], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
-    },
-
-    delete: (id) => {
-        const query = 'DELETE FROM Seats WHERE SeatId = ?';
-        return new Promise((resolve, reject) => {
-            db.query(query, [id], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
-    },
-
-    getSeatsByRoomId: (RoomId) => {
-        const query = `
-            SELECT *      
-            FROM 
-                Seats            
-            WHERE 
-                RoomId = ?
-            ORDER BY 
-                SeatId;
+        const result = await sql.query`
+            INSERT INTO Seats (SeatNumber, Line, RoomId) 
+            VALUES (${SeatNumber}, ${Line}, ${RoomId});
+            SELECT SCOPE_IDENTITY() AS SeatId;
         `;
-
-        return new Promise((resolve, reject) => {
-            db.query(query, [RoomId], (err, results) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
+        return result.recordset[0];
     },
+
+    update: async (id, seat) => {
+        const { SeatNumber, Line, RoomId } = seat;
+        const result = await sql.query`
+            UPDATE Seats 
+            SET SeatNumber = ${SeatNumber},
+                Line = ${Line},
+                RoomId = ${RoomId}
+            WHERE SeatId = ${id}
+        `;
+        return result.rowsAffected[0] > 0;
+    },
+
+    delete: async (id) => {
+        const result = await sql.query`
+            DELETE FROM Seats WHERE SeatId = ${id}
+        `;
+        return result.rowsAffected[0] > 0;
+    },
+
+    getSeatsByRoomId: async (RoomId) => {
+        const result = await sql.query`
+            SELECT s.*, 
+                   CASE WHEN t.TicketId IS NOT NULL THEN 1 ELSE 0 END as isBooked
+            FROM Seats s
+            LEFT JOIN Tickets t ON s.SeatId = t.SeatId
+            WHERE s.RoomId = ${RoomId}
+            ORDER BY s.Line, s.SeatNumber
+        `;
+        return result.recordset;
+    }
 };
 
 module.exports = SeatModel;

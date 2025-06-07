@@ -1,0 +1,71 @@
+.movie-detail {
+    display: flex;
+    padding: 50px;
+    gap: 50px;
+    margin-top: 50px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.movie-poster {
+    flex: 0 0 300px;
+}
+
+.movie-poster img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.movie-info {
+    flex: 1;
+    color: white;
+}
+
+.movie-info h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.movie-meta {
+    margin-bottom: 30px;
+}
+
+.movie-meta p {
+    margin: 10px 0;
+    font-size: 1.1em;
+}
+
+.movie-meta span {
+    color: #3498db;
+}
+
+.movie-description {
+    margin-bottom: 30px;
+}
+
+.movie-description h3 {
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.movie-description p {
+    line-height: 1.6;
+    text-align: justify;
+}
+
+.book-ticket-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    transition: background 0.3s;
+}
+
+.book-ticket-btn:hover {
+    background: #2980b9;
+}

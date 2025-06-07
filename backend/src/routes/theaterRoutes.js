@@ -1,4 +1,5 @@
 const express = require('express');
+const router = express.Router();
 const {
     getAllTheaters,
     getTheaterById,
@@ -7,11 +8,12 @@ const {
     deleteTheater,
     getLocations,
     getTheatersShowingMovie,
+    getMoviesByTheater
 } = require('../controllers/theaterController');
 
-const router = express.Router();
+// Đảm bảo route này được đặt trước '/:id'
+router.get('/:theaterId/movies', getMoviesByTheater);
 
-router.get('/movies/:MovieId', getTheatersShowingMovie);
 router.get('/locations', getLocations);
 router.get('/', getAllTheaters);
 router.get('/:id', getTheaterById);

@@ -5,22 +5,21 @@ const {
     createShowtime,
     updateShowtime,
     deleteShowtime,
-    getShowtimesForMovieByLocationAndTimeRange,
-    getShowtimesForMovieByTimeRange,
-    getShowtimesForMovieInThreeDaysInLocation,
+    getAllShowtimesWithDetails,
     getShowtimesForMovieInThreeDays,
 } = require('../controllers/showtimeController');
 
 const router = express.Router();
-router.get('/:movieId/next-three-days', getShowtimesForMovieInThreeDays);
-router.get('/:movieId/:location/next-three-days', getShowtimesForMovieInThreeDaysInLocation);
-router.get('/:movieId/:location/:startTime/:endTime', getShowtimesForMovieByLocationAndTimeRange);
-router.get('/:movieId/:startTime/:endTime', getShowtimesForMovieByTimeRange);
+
+// Base routes
 router.get('/', getAllShowtimes);
+router.get('/details', getAllShowtimesWithDetails);
+
+// Other routes
 router.get('/:id', getShowtimeById);
 router.post('/', createShowtime);
 router.put('/:id', updateShowtime);
 router.delete('/:id', deleteShowtime);
-
+router.get('/movie/:movieId/next-three-days', getShowtimesForMovieInThreeDays);
 
 module.exports = router;

@@ -1,66 +1,52 @@
-const db = require('../config/db');
+const { sql } = require('../config/db');
 
 const PaymentModel = {
-    getAll: () => {
-        const query = 'SELECT * FROM Payments';
-        return new Promise((resolve, reject) => {
-            db.query(query, (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
+    getAll: async () => {
+        const result = await sql.query`SELECT * FROM Payments`;
+        return result.recordset;
     },
 
-    getById: (id) => {
-        const query = 'SELECT * FROM Payments WHERE PaymentId = ?';
-        return new Promise((resolve, reject) => {
-            db.query(query, [id], (err, results) => {
-                if (err) return reject(err);
-                resolve(results[0]);
-            });
-        });
+    getById: async (id) => {
+        const result = await sql.query`
+            SELECT * FROM Payments WHERE PaymentId = ${id}`;
+        return result.recordset[0];
     },
 
-    create: (payment) => {
-        const query = `
-            INSERT INTO Payments (PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId)
-            VALUES (?, ?, ?, ?, ?)
-        `;
+    create: async (payment) => {
         const { PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId } = payment;
-
-        return new Promise((resolve, reject) => {
-            db.query(query, [PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
-    },
-
-    update: (id, payment) => {
-        const query = `
-            UPDATE Payments
-            SET PaymentStatus = ?, Amount = ?, PaymentTime = ?, PaymentMethod = ?, UserId = ?
-            WHERE PaymentId = ?
+        const result = await sql.query`
+            INSERT INTO Payments (
+                PaymentStatus, Amount, PaymentTime, 
+                PaymentMethod, UserId
+            ) VALUES (
+                ${PaymentStatus}, ${Amount}, ${PaymentTime}, 
+                ${PaymentMethod}, ${UserId}
+            );
+            SELECT SCOPE_IDENTITY() AS PaymentId;
         `;
+        return result.recordset[0];
+    },
+
+    update: async (id, payment) => {
         const { PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId } = payment;
-
-        return new Promise((resolve, reject) => {
-            db.query(query, [PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId, id], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
+        const result = await sql.query`
+            UPDATE Payments 
+            SET PaymentStatus = ${PaymentStatus},
+                Amount = ${Amount},
+                PaymentTime = ${PaymentTime},
+                PaymentMethod = ${PaymentMethod},
+                UserId = ${UserId}
+            WHERE PaymentId = ${id}
+        `;
+        return result.rowsAffected[0] > 0;
     },
 
-    delete: (id) => {
-        const query = 'DELETE FROM Payments WHERE PaymentId = ?';
-        return new Promise((resolve, reject) => {
-            db.query(query, [id], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
-    },
+    delete: async (id) => {
+        const result = await sql.query`
+            DELETE FROM Payments WHERE PaymentId = ${id}
+        `;
+        return result.rowsAffected[0] > 0;
+    }
 };
 
 module.exports = PaymentModel;

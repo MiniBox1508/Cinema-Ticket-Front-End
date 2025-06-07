@@ -4,9 +4,9 @@ const TheaterModel = require('../models/theaterModel');
 const getAllTheaters = async (req, res) => {
     try {
         const theaters = await TheaterModel.getAll();
-        res.status(200).json(theaters);
+        res.json(theaters);
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch theaters', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
@@ -29,9 +29,12 @@ const createTheater = async (req, res) => {
     const { Name, TotalRoom, Location } = req.body;
     try {
         const result = await TheaterModel.create({ Name, TotalRoom, Location });
-        res.status(201).json({ message: 'Theater created successfully', theater: result });
+        res.status(201).json({ 
+            message: 'Tạo rạp thành công', 
+            theaterId: result.TheaterId 
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to create theater', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
@@ -94,6 +97,37 @@ const getTheatersShowingMovie = async (req, res) => {
     }
 };
 
+// Thêm hàm mới
+const getMoviesByTheater = async (req, res) => {
+    const { theaterId } = req.params;
+    try {
+        console.log('Getting movies for theater:', theaterId);
+        
+        if (!theaterId) {
+            return res.status(400).json({
+                message: 'TheaterId is required'
+            });
+        }
+
+        const movies = await TheaterModel.getMoviesByTheater(theaterId);
+        console.log('Movies found:', movies);
+
+        if (!movies || movies.length === 0) {
+            return res.status(404).json({
+                message: 'Không có phim nào đang chiếu tại rạp này'
+            });
+        }
+
+        res.status(200).json(movies);
+    } catch (err) {
+        console.error('Error in getMoviesByTheater:', err);
+        res.status(500).json({
+            error: 'Không thể tải danh sách phim',
+            details: err.message
+        });
+    }
+};
+
 module.exports = {
     getAllTheaters,
     getTheaterById,
@@ -102,4 +136,5 @@ module.exports = {
     deleteTheater,
     getLocations,
     getTheatersShowingMovie,
+    getMoviesByTheater
 };

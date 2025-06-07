@@ -26,12 +26,15 @@ const getTicketById = async (req, res) => {
 
 // Thêm một vé mới
 const createTicket = async (req, res) => {
-    const { SeatNumber, BookingTime, TotalPrice, PaymentStatus, UserId, ShowtimeId, PaymentId } = req.body;
+    const ticketData = req.body;
     try {
-        const result = await TicketModel.create({ SeatNumber, BookingTime, TotalPrice, PaymentStatus, UserId, ShowtimeId, PaymentId });
-        res.status(201).json({ message: 'Ticket created successfully', ticket: result });
+        const result = await TicketModel.create(ticketData);
+        res.status(201).json({ 
+            message: 'Tạo vé thành công', 
+            ticketId: result.TicketId 
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to create ticket', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
@@ -79,15 +82,14 @@ const getTicketsByUserEmail = async (req, res) => {
 
 const getTicketsByShowtimeId = async (req, res) => {
     const { showtimeId } = req.params;
-
     try {
         const tickets = await TicketModel.getTicketsByShowtimeId(showtimeId);
-        if (tickets.length === 0) {
-            return res.status(404).json({ message: 'No tickets found for this showtimeId' });
+        if (!tickets.length) {
+            return res.status(404).json({ message: 'Không tìm thấy vé cho suất chiếu này' });
         }
-        res.status(200).json(tickets);
+        res.json(tickets);
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch tickets by showtimeId', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
