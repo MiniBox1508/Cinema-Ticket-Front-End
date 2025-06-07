@@ -197,8 +197,8 @@
 /* Thông báo số lượng ghế */
 .seat-grid .seat-selection-info {
     position: absolute;
-    bottom: 18px;
-    right: 11px;
+    bottom: 2.7%;
+    right: 1.5%;
     background: rgb(255, 255, 255, 0.25);
     backdrop-filter: blur(5px);
     color: white;
@@ -207,20 +207,24 @@
     padding: 10px;
     border-radius: 16px;
     z-index: 1000;
+    min-width: 30px; /* Đặt chiều rộng tối thiểu */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* Nút thanh toán */
 .seat-selection-info .payment-button {
     position: absolute;
-    left: -778px; /* Sát trái */
-    bottom: -2px; /* Sát dưới */
-    width: 120px;
-    height: 36px;
+    right: 520%; /* Cách lề phải của seat-selection-info */
+    top: 10%; /* Căn theo top của seat-selection-info */
+    width: 120px; /* Chiều rộng cố định */
+    height: 90%; /* Chiều cao bằng với seat-selection-info */
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
     border-radius: 16px;
     color: white;
-    font-family: 'cc', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 15px;
     font-weight: 500;
     display: flex; 
@@ -229,7 +233,6 @@
     text-decoration: none;
     z-index: 1010;
     padding: 2px 4px;
-    font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 .seat-selection-info .payment-button i {
