@@ -48,7 +48,7 @@ header::before {
     width: 100vw;
     height: 100vh;
     /*background: url('img/money\ heist1.jpg')no-repeat center center / cover;*/
-    background: url('img/cinema_wallp.jpg')no-repeat center center / cover;
+    background: url('../img/cinema_wallp.jpg')no-repeat center center / cover;
     opacity: 0.9;
     z-index: -3;
 }
@@ -127,6 +127,35 @@ header nav .logo_ul ul li a:hover{
     color: rgb(255, 255, 255, .7);
 }
 
+
+/* Menu đăng nhập/đăng ký */
+header nav .auth_menu {
+    display: flex;
+    align-items: center;
+    margin-left: 19%;
+}
+
+header nav .auth_menu ul {
+    display: flex;
+    align-items: center;
+    list-style: none;
+}
+
+header nav .auth_menu ul li {
+    padding: 3px 15px;
+}
+
+header nav .auth_menu ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    transition: 0.3s linear;
+}
+
+header nav .auth_menu ul li a:hover {
+    color: rgb(255, 255, 255, .7);
+}
 
 /*tìm kiếm và người dùng bên phải*/
 header nav .search_user{
