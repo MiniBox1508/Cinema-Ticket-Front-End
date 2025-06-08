@@ -1,4 +1,4 @@
-- Tạo database nếu chưa tồn tại
+-- Tạo database nếu chưa tồn tại
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = N'MovieTheater')
 BEGIN
     CREATE DATABASE MovieTheater;
