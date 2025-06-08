@@ -1,3 +1,6 @@
+const sql = require('mssql');
+const config = require('../config/db');
+
 const db = require('../config/db');
 
 const RoomModel = {
@@ -52,6 +55,37 @@ const RoomModel = {
             });
         });
     },
+
+    getRoomsByShowtime: async (showtimeId) => {
+        try {
+            const pool = await sql.connect(config);
+            const request = pool.request();
+            
+            request.input('showtimeId', sql.Int, showtimeId);
+
+            const query = `
+                SELECT DISTINCT
+                    r.RoomId,
+                    r.Name,
+                    r.TotalSeat,
+                    t.Name as TheaterName,
+                    s.StartTime,
+                    s.EndTime,
+                    s.Price
+                FROM Room r
+                INNER JOIN Theaters t ON r.TheaterId = t.TheaterId
+                INNER JOIN Showtimes s ON r.RoomId = s.RoomId
+                WHERE s.ShowtimeId = @showtimeId`;
+
+            const result = await request.query(query);
+            console.log('Found rooms:', result.recordset.length);
+            return result.recordset;
+
+        } catch (error) {
+            console.error('Error in getRoomsByShowtime:', error);
+            throw error;
+        }
+    }
 };
 
 module.exports = RoomModel;

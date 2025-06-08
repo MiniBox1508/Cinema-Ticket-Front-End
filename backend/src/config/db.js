@@ -1,19 +1,26 @@
-// db.js
-const mysql = require('mysql');
+const sql = require('mssql');
 require('dotenv').config();
 
-// Tạo kết nối đến cơ sở dữ liệu MySQL với thông tin cấu hình
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,        // Địa chỉ máy chủ
-    user: process.env.DB_USERNAME,             // Tên đăng nhập MySQL (mặc định là 'root' trong XAMPP)
-    password: process.env.DB_PASSWORD,             // Mật khẩu MySQL (để trống nếu sử dụng mặc định trong XAMPP)
-    database: process.env.DB_DATABASE_NAME  // Tên cơ sở dữ liệu đã tạo
-});
+const config = {
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
+    database: process.env.DB_NAME,
+    options: {
+        encrypt: process.env.DB_ENCRYPT === 'true',
+        trustServerCertificate: true,
+        instanceName: process.env.DB_INSTANCE_NAME
+    }
+};
 
-// Kết nối đến MySQL và kiểm tra lỗi
-db.connect((err) => {
-    if (err) throw err;
-    console.log('Database connected!'); // Thông báo nếu kết nối thành công
-});
+async function connectDB() {
+    try {
+        await sql.connect(config);
+        console.log('Connected to SQL Server');
+    } catch (err) {
+        console.error('Database connection error:', err);
+        throw err;
+    }
+}
 
-module.exports = db; // Xuất kết nối để dùng trong các model
+module.exports = { sql, config, connectDB };

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOVIES</title>
+    <link rel="stylesheet" href="../CSS/payment.css">
+    <link rel="stylesheet" href="../CSS/main.css">
+    <link rel="shortcut icon" href="../img/soict_ticket_2.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo_ul">
+                <img src="../img/soict_ticket_2.png" alt="">
+                <ul>    
+                    <li>
+                        <a href="home.html">Trang Chủ</a>
+                    </li>
+                    
+                    <li>
+                        <a href="theater.html">Rạp Phim</a>
+                    </li>
+                    
+                    <li>
+                        <a href="movie.html">Phim</a>
+                    </li>
+                    
+                    <li>
+                        <a href="ticket.html">Đặt Vé</a>
+                    </li>
+                </ul>
+            </div>
+        </nav> 
+
+
+
+
+    <div class="tables_container">
+            <!-- Bảng bên trái: Danh sách vé -->
+            <div class="ticket_table">
+                <div class="ticket_list">
+                    <!-- Tickets will be loaded dynamically -->
+                </div>
+                <div class="notification_box">
+                    Đã chọn <span id="selected_count">0</span> vé - Tổng tiền: <span id="total_amount">0 VNĐ</span>
+                </div>
+            </div>
+            <!-- Bảng bên phải: Thông tin thanh toán -->
+            <div class="payment_table">
+                <h3>Thông Tin Thanh Toán</h3>
+                <div class="payment_info">
+                    <p><strong>Tổng Tiền:</strong> <span id="total_amount">0 VNĐ</span></p>
+                    <p><strong>Mã thanh toán:</strong> PAYMENT001</p>
+                    <p><strong>Hình thức thanh toán:</strong>
+                        <select id="payment_method">
+                            <option value="cash">Thanh toán tại quầy</option>
+                            <option value="visa credit">Chuyển khoản ngân hàng</option>
+                            <option value="qr">Quét QR</option>
+                        </select>
+                    </p>
+                    <p><strong>Trạng thái thanh toán:</strong> <span id="payment_status">Đang xử lý</span></p>
+                </div>
+            </div>
+        </div>
+        <!-- Clickbox Hoàn thành -->
+        <a href="home.html" class="complete_button">
+            Hoàn thành <span class="arrow_icon">→</span>
+        </a>    
+</header>
+<!-- Fix script path -->
+<script src="../JavaScript/payment.js"></script>
+</body>
+</html>

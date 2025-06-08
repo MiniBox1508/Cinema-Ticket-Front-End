@@ -1,4 +1,6 @@
 const db = require('../config/db');
+const sql = require('mssql');
+const config = require('../config/db');
 
 const SeatModel = {
     getAll: () => {
@@ -53,26 +55,31 @@ const SeatModel = {
         });
     },
 
-    getSeatsByRoomId: (RoomId) => {
-        const query = `
-            SELECT *      
-            FROM 
-                Seats            
-            WHERE 
-                RoomId = ?
-            ORDER BY 
-                SeatId;
-        `;
+    getSeatsByRoomId: async (RoomId) => {
+        try {
+            const pool = await sql.connect(config);
+            const request = pool.request();
+            request.input('RoomId', sql.Int, RoomId);
 
-        return new Promise((resolve, reject) => {
-            db.query(query, [RoomId], (err, results) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
-    },
+            const query = `
+                SELECT 
+                    SeatId,
+                    SeatNumber,
+                    Line,
+                    RoomId
+                FROM Seats
+                WHERE RoomId = @RoomId
+                ORDER BY Line, SeatNumber`;
+
+            const result = await request.query(query);
+            console.log('Found seats for room', RoomId, ':', result.recordset.length);
+            return result.recordset;
+
+        } catch (error) {
+            console.error('Error in getSeatsByRoomId:', error);
+            throw error;
+        }
+    }
 };
 
 module.exports = SeatModel;

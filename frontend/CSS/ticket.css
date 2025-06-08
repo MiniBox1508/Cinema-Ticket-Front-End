@@ -1,0 +1,387 @@
+/* Khung chứa các select box */
+.select-boxes-frame {
+    position: relative; 
+    width: 20%;
+    margin-left: 5%;
+    margin-top: 9vh;
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    z-index: 0;
+}
+
+/* Container cho mỗi select box */
+.select-box-container {
+    position: relative;
+    width: 100%;
+}
+
+/* Lớp nền mờ tương tự search card */
+.select-box-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgb(255, 255, 255, 0.25);
+    border-radius: 6px;
+    backdrop-filter: blur(5px);
+    z-index: -1;
+}
+
+/* Kiểu dáng cho tiêu đề */
+.select-label {
+    display: block;
+    color: white;
+    font-size: 16px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 600;
+    margin-top: 2px; /* Lề trên 2px */
+    margin-bottom: 2px; /* Lề dưới 2px */
+    padding: 10px;
+    /*text-transform: uppercase;*/
+}
+
+/* Kiểu dáng cho select box */
+.select-box-container select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 500;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    margin-top: 2px; /* Lề trên 2px */
+    margin-bottom: 2px; /* Lề dưới 2px */
+}
+
+/* Kiểu dáng cho các option trong select */
+.select-box-container select option {
+    background: rgb(45, 45, 45);
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 16px;
+}
+
+/* Tùy chỉnh mũi tên của select box */
+.select-box-container::after {
+    content: '\25BC';
+    position: absolute;
+    right: 10px;
+    top: calc(50% + 22px); /* Điều chỉnh vị trí do có tiêu đề */
+    transform: translateY(-50%);
+    color: white;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+/* Hiệu ứng hover cho select box */
+.select-box-container select:hover {
+    background: rgb(255, 255, 255, .2);
+}
+
+/* Style cho select box showtime */
+#showtime-filter {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: white;
+}
+
+#showtime-filter optgroup {
+    font-weight: bold;
+    color: #333;
+    background: #f5f5f5;
+}
+
+#showtime-filter option {
+    padding: 8px;
+    color: #666;
+}
+
+#showtime-filter option:hover {
+    background-color: #f0f0f0;
+}
+
+/* Lưới ghế */
+.seat-grid {
+    width: auto;
+    height: auto;
+    margin: 5vh auto;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: 30px repeat(10, 60px); /* Điều chỉnh cột để thẳng hàng */
+    grid-gap: 10px; /* Giảm khoảng cách giữa các ghế */
+    padding: 20px;
+    position: absolute;
+    top: 15vh;
+    left: 30%;
+}
+
+/* Nhãn hàng (A-I) */
+.seat-grid .row-label {
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 1vw;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* Nhãn cột (1-10) */  
+.seat-grid .col-label {
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 1vw;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+/* Ô ghế */
+.seat-grid .seat {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 0.8vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    height: 40px; /* Chiều cao cố định */
+    width: 100%; /* Chiều rộng 100% của grid cell */
+}
+
+/* Icon ghế */
+.seat-grid .seat::before {
+    content: '\F66C'; /* Icon ghế từ Bootstrap Icons (bi-armchair) */
+    font-family: 'bootstrap-icons';
+    font-size: 16px;
+    position: absolute;
+    top: 4px;
+    display: block;
+}
+
+/* Mã ghế */
+.seat-grid .seat span {
+    position: absolute;
+    bottom: 1px;
+}
+
+/* Hiệu ứng hover */
+.seat-grid .seat:hover {
+    background: rgb(0, 105, 148); /* Xanh nước biển */
+}
+
+/* Ghế được chọn */
+.seat-grid .seat.selected {
+    background: rgb(255, 0, 0); /* Đỏ */
+}
+
+/* Ghế đã được đặt */
+.seat-grid .seat.occupied {
+    background-color: #ffa200;
+    cursor: not-allowed;
+}
+
+/* Hiệu ứng hover cho ghế đã đặt */
+.seat-grid .seat.occupied:hover {
+    background-color: #f57002;
+}
+
+/* Thông báo lỗi */
+.seat-grid .seat-error-message {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgb(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none;
+    z-index: 1000;
+}
+
+/* Thông báo số ghế và nút thanh toán */
+.seat-grid .seat-selection-info {
+    position: absolute;
+    bottom: 2.7%;
+    right: 1.5%;
+    background: rgb(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 16px;
+    z-index: 1000;
+    min-width: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Nút thanh toán */
+.seat-selection-info .payment-button {
+    position: absolute;
+    right: 520%;
+    top: 10%;
+    width: 120px;
+    height: 90%;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    text-decoration: none;
+    z-index: 1010;
+    padding: 2px 4px;
+}
+
+.seat-selection-info .payment-button i {
+    margin-left: 8px;
+    font-size: 15px;
+}
+
+/* Hover nút thanh toán */
+.seat-selection-info .payment-button:hover {
+    background: rgb(0, 105, 255);
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Disable states */
+select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    border-color: #dee2e6;
+}
+
+select:not(:disabled) {
+    background-color: #fff;
+    color: #212529;
+    cursor: pointer;
+}
+
+.seat.occupied {
+    background: #ff4444;
+    cursor: not-allowed;
+}
+
+/* Booking info */
+.booking-info {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+}
+
+.book-button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.book-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Booking summary */
+.booking-summary {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 28px;
+    margin-bottom: 10px; /* Thêm margin bottom */
+    position: relative;
+    bottom: -5px; /* Thêm khoảng cách từ dưới lên */
+}
+
+.seat-count {
+    color: white;
+    font-size: 1vw;
+}
+
+.payment-button {
+    padding: 1vh 2vh;
+    background: rgb(0, 105, 148);
+    color: white;
+    border: none;
+    border-radius: 0.5vh;
+    font-size: 1vw;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.payment-button:disabled {
+    background: rgba(255, 255, 255, 0.2);
+    cursor: not-allowed;
+}
+
+.payment-button:not(:disabled):hover {
+    background: rgb(0, 125, 168);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

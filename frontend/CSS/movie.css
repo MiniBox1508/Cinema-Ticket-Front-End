@@ -1,0 +1,171 @@
+header section {
+    position: absolute;
+    width: 64.5%;       /* Chiếm 64,5% chiều dài header */
+    height: 80%; 
+    padding: 0 50px;
+    bottom: 20px;
+    overflow-y: auto; /*Cuộn dọc */
+    overflow-x: hidden; /* Ẩn cuộn ngang */
+    scroll-behavior: smooth; /* Cuộn mượt */
+}
+
+/*Ẩn thanh cuộn dọc trong các trình duyệt WebKit*/
+header section::-webkit-scrollbar {
+    width: 0; /* Ẩn thanh cuộn trong các trình duyệt WebKit */
+    background: transparent; /* Đảm bảo không có nền */
+}
+
+/*Ẩn thanh cuộn dọc trong IE/Edge và Firefox*/
+header section {
+    -ms-overflow-style: none; /* Ẩn thanh cuộn trong IE/Edge */
+    scrollbar-width: none; /* Ẩn thanh cuộn trong Firefox */
+}
+
+header section .cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 cột đều nhau */
+    gap: 30px; /* Khoảng cách giữa các thẻ */
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    align-items: start;
+    scroll-behavior: smooth;
+    height: auto; /* Tự động theo nội dung */
+}
+
+header section .cards .card {
+    position: relative;
+    width: 180px;
+    height: 270px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #222;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    transition: transform 0.25s cubic-bezier(.4,2,.6,1), box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    cursor: pointer;
+}
+
+header section .cards .card:hover {
+    transform: scale(1.08) translateY(-8px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+    z-index: 2;
+}
+
+header section .cards .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+    transition: filter 0.2s;
+}
+
+header section .cards .card .cont {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 16px 12px 12px 12px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.85) 70%, rgba(0,0,0,0.0) 100%);
+    color: #fff;
+    border-radius: 0 0 14px 14px;
+    z-index: 1;
+}
+
+header section .cards .card .cont h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+header section .cards .card .cont p {
+    font-size: 0.95rem;
+    margin: 0;
+    color: #e0e0e0;
+    font-weight: 400;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+header section .cards .card .cont span {
+    background: #ffe066;
+    color: #222;
+    font-size: 0.85em;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin: 0 4px 0 2px;
+    font-weight: 600;
+}
+
+header section .cards .card .cont i.bi-star-fill {
+    color: #ffe066;
+    margin-left: 2px;
+    margin-right: 2px;
+    font-size: 1em;
+}
+
+/*header section .cards .card .rest_card{
+    position: absolute;
+    width: 180%;
+    height: 100%;
+    border-radius: 8px;
+    left: 0;
+    top: 0;
+    z-index: 99999;
+    opacity: 0;
+    transition: 0.3s linear;
+}
+header section .cards .card .rest_card img{
+    position: relative;
+    width:100%;
+    height: 100%;
+    border-radius: 8px;
+    z-index: -1;
+}
+header section .cards .card .rest_card::after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 4%;
+    background: linear-gradient(180deg,transparent,rgb(0, 0, 0));
+    left: 0;
+    bottom: 0;
+    z-index: -1;
+}
+ header section .cards .card .rest_card .cont{
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
+    left: 0;
+    color: #fff;
+    padding: 0px 15px ;
+    font-size: 10px;
+    
+}
+header section .cards .card .rest_card .cont .sub{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right:25px ;
+    font-size: 8px;
+    
+}
+header section .cards .card .rest_card .cont .sub p{
+    font-weight: 400;
+    font-size: 13px;
+    color: rgb(255, 255, 255, .7);
+}
+header section .cards .card .rest_card .cont .sub h3 span{
+    background-color: yellow;
+    color: black;
+    padding: 0px 2px 0px 2px; 
+    margin: 0px 3px 0px 1px;
+}
+header section .cards .card:hover .rest_card{
+    opacity: 1;
+    
+}*/

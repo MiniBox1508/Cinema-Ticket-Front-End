@@ -10,7 +10,8 @@ const {
 
 const router = express.Router();
 
-router.get('/room/:roomId', getSeatsByRoomId);
+// Make sure this route is defined before more specific routes
+router.get('/room/:RoomId', getSeatsByRoomId);
 router.get('/', getAllSeats);
 router.get('/:id', getSeatById);
 router.post('/', createSeat);

@@ -4,9 +4,9 @@ const PaymentModel = require('../models/paymentModel');
 const getAllPayments = async (req, res) => {
     try {
         const payments = await PaymentModel.getAll();
-        res.status(200).json(payments);
+        res.json(payments);
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch payments', details: err });
+        res.status(500).json({ message: err.message });
     }
 };
 
@@ -26,13 +26,27 @@ const getPaymentById = async (req, res) => {
 
 // Tạo mới một thanh toán
 const createPayment = async (req, res) => {
-    const { PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId } = req.body;
-    const payment = { PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId };
+    const { paymentStatus, amount, paymentMethod, userId } = req.body;
     try {
-        const result = await PaymentModel.create(payment);
-        res.status(201).json({ message: 'Payment created successfully', paymentId: result.insertId });
+        // Insert payment record
+        const result = await PaymentModel.create({
+            PaymentStatus: paymentStatus,
+            Amount: amount,
+            PaymentTime: new Date(),
+            PaymentMethod: paymentMethod,
+            UserId: userId
+        });
+
+        res.status(201).json({
+            message: 'Payment created successfully',
+            paymentId: result.PaymentId
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to create payment', details: err });
+        console.error('Error creating payment:', err);
+        res.status(500).json({
+            error: 'Failed to create payment',
+            details: err.message
+        });
     }
 };
 

@@ -1,4 +1,5 @@
-const db = require('../config/db');
+const sql = require('mssql');
+const config = require('../config/db');
 
 const ShowtimeModel = {
     getAll: () => {
@@ -130,6 +131,73 @@ const ShowtimeModel = {
                 resolve(results);
             });
         });
+    },
+
+    getShowtimesByTheaterAndMovie: async (theaterId, movieId) => {
+        try {
+            const pool = await sql.connect(config);
+            const request = pool.request();
+            
+            request.input('theaterId', sql.Int, theaterId);
+            request.input('movieId', sql.Int, movieId);
+
+            const query = `
+                SELECT DISTINCT
+                    s.ShowtimeId,
+                    s.StartTime,
+                    s.EndTime, 
+                    s.Price,
+                    s.SeatStatus,
+                    m.Title as MovieTitle,
+                    t.Name as TheaterName,
+                    r.RoomId,
+                    r.Name as RoomName
+                FROM Showtimes s
+                INNER JOIN Movies m ON s.MovieId = m.MovieId
+                INNER JOIN Theaters t ON s.TheaterId = t.TheaterId
+                INNER JOIN Room r ON s.RoomId = r.RoomId
+                WHERE s.TheaterId = @theaterId 
+                AND s.MovieId = @movieId
+                AND s.StartTime > DATEADD(HOUR, -3, s.StartTime) -- Chỉ lấy suất chiếu trong khoảng 3 tiếng trước
+                ORDER BY s.StartTime ASC`;
+
+            const result = await request.query(query);
+            console.log('Found showtimes:', result.recordset.length);
+            return result.recordset;
+
+        } catch (error) {
+            console.error('Error in getShowtimesByTheaterAndMovie:', error);
+            throw error;
+        }
+    },
+
+    getRoomsByShowtimeId: async (showtimeId) => {
+        try {
+            const pool = await sql.connect();
+            const request = pool.request();
+            
+            request.input('showtimeId', sql.Int, showtimeId);
+
+            const query = `
+                SELECT DISTINCT
+                    r.RoomId,
+                    r.Name as RoomName,
+                    r.TotalSeat,
+                    t.Name as TheaterName,
+                    s.StartTime,
+                    s.EndTime
+                FROM Room r
+                INNER JOIN Theaters t ON r.TheaterId = t.TheaterId
+                INNER JOIN Showtimes s ON r.RoomId = s.RoomId
+                WHERE s.ShowtimeId = @showtimeId`;
+
+            const result = await request.query(query);
+            return result.recordset;
+
+        } catch (error) {
+            console.error('Error in getRoomsByShowtimeId:', error);
+            throw error;
+        }
     },
 };
 

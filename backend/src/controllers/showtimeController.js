@@ -3,10 +3,30 @@ const ShowtimeModel = require('../models/showtimeModel');
 // Lấy danh sách tất cả các suất chiếu
 const getAllShowtimes = async (req, res) => {
     try {
+        console.log('Getting all showtimes...'); // Debug log
+
         const showtimes = await ShowtimeModel.getAll();
-        res.status(200).json(showtimes);
+        
+        console.log('Showtimes found:', showtimes?.length || 0); // Debug log
+
+        if (!showtimes || showtimes.length === 0) {
+            console.log('No showtimes available'); // Debug log
+            return res.status(404).json({ 
+                message: 'Không có suất chiếu nào',
+                details: 'Không tìm thấy suất chiếu nào trong cơ sở dữ liệu' 
+            });
+        }
+
+        res.status(200).json({
+            count: showtimes.length,
+            showtimes: showtimes
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Không thể lấy danh sách suất chiếu', details: err });
+        console.error('Error getting showtimes:', err); // Debug log
+        res.status(500).json({ 
+            error: 'Không thể lấy danh sách suất chiếu',
+            details: err.message 
+        });
     }
 };
 
@@ -133,6 +153,70 @@ const getShowtimesForMovieInThreeDays = async (req, res) => {
     }
 };
 
+// Lấy danh sách tất cả các suất chiếu với thông tin chi tiết
+const getAllShowtimesWithDetails = async (req, res) => {
+    try {
+        const showtimes = await ShowtimeModel.getAllShowtimesWithDetails();
+        
+        if (!showtimes || showtimes.length === 0) {
+            return res.status(404).json({ message: 'Không có lịch chiếu nào' });
+        }
+
+        // Nhóm lịch chiếu theo phim và rạp
+        const groupedShowtimes = showtimes.reduce((acc, showtime) => {
+            const key = `${showtime.MovieTitle}-${showtime.TheaterName}`;
+            if (!acc[key]) {
+                acc[key] = {
+                    movieTitle: showtime.MovieTitle,
+                    theaterName: showtime.TheaterName,
+                    posterUrl: showtime.PosterUrl,
+                    rating: showtime.Rating,
+                    price: showtime.Price,
+                    showtimes: []
+                };
+            }
+            acc[key].showtimes.push({
+                showtimeId: showtime.ShowtimeId,
+                startTime: showtime.StartTime,
+                endTime: showtime.EndTime,
+                roomName: showtime.RoomName,
+                seatStatus: showtime.SeatStatus
+            });
+            return acc;
+        }, {});
+
+        res.status(200).json(Object.values(groupedShowtimes));
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).json({ 
+            error: 'Không thể tải danh sách lịch chiếu',
+            details: err.message 
+        });
+    }
+};
+
+// Thêm hàm này nếu chưa có
+const getShowtimesByTheaterAndMovie = async (req, res) => {
+    const { theaterId, movieId } = req.params;
+    try {
+        console.log('Getting showtimes for theater:', theaterId, 'movie:', movieId);
+        const showtimes = await ShowtimeModel.getShowtimesByTheaterAndMovie(theaterId, movieId);
+        
+        if (!showtimes || showtimes.length === 0) {
+            return res.status(404).json({
+                message: 'Không tìm thấy suất chiếu nào'
+            });
+        }
+        
+        res.status(200).json(showtimes);
+    } catch (err) {
+        console.error('Error in getShowtimesByTheaterAndMovie:', err);
+        res.status(500).json({
+            error: 'Không thể tải danh sách suất chiếu',
+            details: err.message
+        });
+    }
+};
 
 module.exports = {
     getAllShowtimes,
@@ -144,4 +228,6 @@ module.exports = {
     getShowtimesForMovieByTimeRange,
     getShowtimesForMovieInThreeDaysInLocation,
     getShowtimesForMovieInThreeDays,
+    getAllShowtimesWithDetails,
+    getShowtimesByTheaterAndMovie
 };
