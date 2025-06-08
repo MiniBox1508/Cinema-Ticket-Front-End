@@ -1,15 +1,16 @@
 const { sql } = require('../config/db');
+const config = require('../config/db');
 
 const TicketModel = {
     // Lấy danh sách tất cả vé
     getAll: async () => {
-        const result = await sql.query`SELECT * FROM Ticket`;
+        const result = await sql.query`SELECT * FROM Tickets`; // Sửa từ Ticket thành Tickets
         return result.recordset;
     },
 
     // Lấy thông tin chi tiết một vé
     getById: async (id) => {
-        const result = await sql.query`SELECT * FROM Ticket WHERE TicketId = ${id}`;
+        const result = await sql.query`SELECT * FROM Tickets WHERE TicketId = ${id}`;
         return result.recordset[0];
     },
 
@@ -17,7 +18,7 @@ const TicketModel = {
     create: async (ticket) => {
         const { SeatNumber, BookingTime, TotalPrice, PaymentStatus, UserId, ShowtimeId, PaymentId } = ticket;
         const result = await sql.query`
-            INSERT INTO Ticket (
+            INSERT INTO Tickets (
                 SeatNumber, BookingTime, TotalPrice, 
                 PaymentStatus, UserId, ShowtimeId, PaymentId
             ) VALUES (
@@ -33,7 +34,7 @@ const TicketModel = {
     update: async (id, ticket) => {
         const { SeatNumber, BookingTime, TotalPrice, PaymentStatus, UserId, ShowtimeId, PaymentId } = ticket;
         const result = await sql.query`
-            UPDATE Ticket 
+            UPDATE Tickets 
             SET 
                 SeatNumber = ${SeatNumber}, 
                 BookingTime = ${BookingTime}, 
@@ -49,7 +50,7 @@ const TicketModel = {
 
     // Xóa một vé
     delete: async (id) => {
-        const result = await sql.query`DELETE FROM Ticket WHERE TicketId = ${id}`;
+        const result = await sql.query`DELETE FROM Tickets WHERE TicketId = ${id}`;
         return result.rowsAffected[0] > 0;
     },
 
@@ -82,6 +83,57 @@ const TicketModel = {
             AND PaymentStatus IN ('paid', 'pending')
         `;
         return result.recordset;
+    },
+
+    // Thêm hàm để lấy ghế đã đặt theo showtime
+    getBookedSeatsByShowtime: async (showtimeId) => {
+        try {
+            const pool = await sql.connect(config);
+            const request = pool.request();
+            request.input('showtimeId', sql.Int, showtimeId);
+
+            const query = `
+                SELECT DISTINCT
+                    s.SeatId,
+                    s.SeatNumber, 
+                    s.Line,
+                    s.RoomId
+                FROM Seats s
+                INNER JOIN Tickets t ON s.SeatNumber = t.SeatNumber  
+                INNER JOIN Showtimes sh ON t.ShowtimeId = sh.ShowtimeId
+                WHERE t.ShowtimeId = @showtimeId
+                AND s.RoomId = sh.RoomId
+                AND t.PaymentStatus IN ('paid', 'pending')
+            `;
+
+            const result = await request.query(query);
+            return result.recordset;
+
+        } catch (error) {
+            console.error('Error in getBookedSeatsByShowtime:', error);
+            throw error;
+        }
+    },
+
+    // Hàm để lấy giá vé theo showtime
+    getTicketPrice: async (showtimeId) => {
+        try {
+            const pool = await sql.connect(config);
+            const request = pool.request();
+            request.input('showtimeId', sql.Int, showtimeId);
+
+            const query = `
+                SELECT Price
+                FROM Showtimes
+                WHERE ShowtimeId = @showtimeId
+            `;
+
+            const result = await request.query(query);
+            return result.recordset[0]?.Price || 0;
+        } catch (error) {
+            console.error('Error getting ticket price:', error);
+            throw error;
+        }
     }
 };
 

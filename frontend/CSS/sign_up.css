@@ -1,0 +1,111 @@
+/* Container chính chứa form đăng ký */
+.signup-container {
+    width: 40%;
+    height: 70%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -46.5%);
+    font-family: 'Be Vietnam Pro', sans-serif;
+    overflow-y: auto;
+    scrollbar-width: none;  /* Ẩn thanh cuộn cho Firefox */
+    -ms-overflow-style: none;  /* Ẩn thanh cuộn cho IE và Edge */
+}
+
+.signup-container::-webkit-scrollbar {
+    display: none;  /* Ẩn thanh cuộn cho Chrome, Safari và Opera */
+}
+
+.signup-container h2 {
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.input-group label {
+    display: block;
+    color: white;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 16px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+/* Nút đăng ký */
+#signupBtn {
+    width: 20%;
+    height: 10%;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+}
+
+#signupBtn:hover {
+    background-color: rgba(0, 128, 255, 0.5);
+}
+
+/* Link đăng nhập */
+.bottom-text {
+    text-align: center;
+    margin-top: 20px;
+    color: white;
+    font-size: 16px;
+}
+
+.bottom-text a {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.bottom-text a:hover {
+    opacity: 0.8;
+}
+
+/* Hộp thông báo */
+.notification {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    text-align: center;
+}

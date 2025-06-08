@@ -221,6 +221,7 @@ document.getElementById('theater-filter').addEventListener('change', async (e) =
             document.getElementById('movie-filter').disabled = false;
             document.getElementById('showtime-filter').innerHTML = '<option value="" disabled selected>Chọn Suất Chiếu</option>';
             document.getElementById('showtime-filter').disabled = true;
+            document.getElementById('room-filter').innerHTML = '<option value="" disabled selected>Chọn Phòng</option>';
             document.getElementById('room-filter').disabled = true;
         } catch (err) {
             console.error('Error:', err);
@@ -241,11 +242,17 @@ document.getElementById('movie-filter').addEventListener('change', async (e) => 
             console.log('Loading showtimes for theater:', theaterId, 'movie:', movieId);
             
             const response = await fetch(`${API_BASE_URL}/showtimes/theater/${theaterId}/movie/${movieId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const showtimes = await response.json();
-            console.log('Fetched showtimes:', showtimes);
+            console.log('Received showtimes:', showtimes);
 
             const showtimeSelect = document.getElementById('showtime-filter');
+            // Reset showtime select
             showtimeSelect.innerHTML = '<option value="" disabled selected>Chọn Suất Chiếu</option>';
+            showtimeSelect.disabled = true;
 
             if (showtimes && showtimes.length > 0) {
                 showtimes.forEach(showtime => {
@@ -262,118 +269,267 @@ document.getElementById('movie-filter').addEventListener('change', async (e) => 
                 });
                 showtimeSelect.disabled = false;
             } else {
-                showtimeSelect.innerHTML = '<option value="" disabled>Không có suất chiếu</option>';
-                showtimeSelect.disabled = true;
+                showError('Không có suất chiếu nào cho phim này');
             }
+
+            // Reset room select
+            const roomSelect = document.getElementById('room-filter');
+            roomSelect.innerHTML = '<option value="" disabled selected>Chọn Phòng</option>';
+            roomSelect.disabled = true;
+
         } catch (error) {
             console.error('Error loading showtimes:', error);
             showError('Không thể tải danh sách suất chiếu');
+            // Reset selects on error
+            document.getElementById('showtime-filter').disabled = true;
+            document.getElementById('room-filter').disabled = true;
         } finally {
-            hideLoading(); 
+            hideLoading();
         }
+    } else {
+        // Nếu chưa chọn đủ rạp và phim thì disable showtime
+        document.getElementById('showtime-filter').disabled = true;
+        document.getElementById('room-filter').disabled = true;
     }
 });
 
-document.getElementById('showtime-filter').addEventListener('change', (e) => {
+document.getElementById('showtime-filter').addEventListener('change', async (e) => {
     const showtimeId = e.target.value;
     if (showtimeId) {
-        loadRoomsByShowtime(showtimeId);
-        resetDependentSelects('room-filter');
+        try {
+            showLoading();
+            console.log('Loading rooms for showtime:', showtimeId);
+            
+            const response = await fetch(`${API_BASE_URL}/rooms/showtime/${showtimeId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const rooms = await response.json();
+            console.log('Received rooms:', rooms);
+
+            const roomSelect = document.getElementById('room-filter');
+            roomSelect.innerHTML = '<option value="" disabled selected>Chọn Phòng</option>';
+
+            if (rooms && rooms.length > 0) {
+                rooms.forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room.RoomId;
+                    option.textContent = `${room.Name} - ${room.TheaterName}`;
+                    roomSelect.appendChild(option);
+                });
+                roomSelect.disabled = false;
+            } else {
+                showError('Không có phòng nào cho suất chiếu này');
+                roomSelect.disabled = true;
+            }
+        } catch (error) {
+            console.error('Error loading rooms:', error);
+            showError('Không thể tải danh sách phòng');
+            document.getElementById('room-filter').disabled = true;
+        } finally {
+            hideLoading();
+        }
+    } else {
+        document.getElementById('room-filter').disabled = true;
     }
 });
 
 document.getElementById('room-filter').addEventListener('change', async (e) => {
-    const roomId = e.target.value;
-    if (roomId) {
-        await loadAndDisplaySeats(roomId);
+    const RoomId = e.target.value;
+    if (RoomId) {
+        await loadAndDisplaySeats(RoomId);
     } else {
-        const seatGrid = document.querySelector('.seat-grid');
-        seatGrid.style.display = 'none';
+        document.querySelector('.seat-grid').style.display = 'none';
     }
 });
 
-async function loadAndDisplaySeats(roomId) {
+async function loadAndDisplaySeats(RoomId) {
     try {
         showLoading();
-        const response = await fetch(`${API_BASE_URL}/seats/room/${roomId}`);
-        const seats = await response.json();
         
-        const seatGrid = document.querySelector('.seat-grid');
-        seatGrid.style.display = 'block'; // Hiện grid khi có dữ liệu
-        seatGrid.innerHTML = '';
+        // Lấy thông tin tất cả ghế trong phòng
+        const seatsResponse = await fetch(`${API_BASE_URL}/seats/room/${RoomId}`);
+        const seats = await seatsResponse.json();
 
-        // Create seat map headers (1-10)
-        let headerRow = '<div class="seat-row header"><div class="row-label"></div>';
-        for (let i = 1; i <= 10; i++) {
-            headerRow += `<div class="seat-label">${i}</div>`;
-        }
-        headerRow += '</div>';
-        seatGrid.innerHTML = headerRow;
+        // Lấy thông tin suất chiếu đã chọn 
+        const showtimeId = document.getElementById('showtime-filter').value;
+        
+        // Lấy danh sách ghế đã được đặt
+        const bookedSeatsResponse = await fetch(`${API_BASE_URL}/tickets/showtime/${showtimeId}/booked-seats`);
+        const bookedSeats = await bookedSeatsResponse.json();
+        
+        // Tạo map các ghế đã được đặt
+        const bookedSeatIds = new Set(bookedSeats.map(seat => seat.SeatId));
 
-        // Group seats by row
-        const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
-        rows.forEach(row => {
-            let rowHtml = `<div class="seat-row"><div class="row-label">${row}</div>`;
-            
-            for (let i = 1; i <= 10; i++) {
-                const seat = seats.find(s => s.Line === row && s.SeatNumber === i);
-                if (seat) {
-                    const seatClass = seat.isBooked ? 'seat occupied' : 'seat available';
-                    rowHtml += `
-                        <div class="${seatClass}" data-seat-id="${seat.SeatId}">
-                            <span>${row}${i}</span>
-                        </div>`;
-                } else {
-                    rowHtml += `
-                        <div class="seat available" data-seat-id="${row}${i}">
-                            <span>${row}${i}</span>
-                        </div>`;
-                }
-            }
-            rowHtml += '</div>';
-            seatGrid.appendChild(createElementFromHTML(rowHtml));
+        // Đánh dấu ghế đã được đặt
+        seats.forEach(seat => {
+            seat.isBooked = bookedSeatIds.has(seat.SeatId);
         });
 
-        // Add click events to seats
-        addSeatClickEvents();
+        displaySeats(seats);
         
     } catch (err) {
+        console.error('Error loading seats:', err);
         showError('Không thể tải thông tin ghế');
-        console.error(err);
     } finally {
         hideLoading();
     }
 }
 
-function createElementFromHTML(htmlString) {
-    const div = document.createElement('div');
-    div.innerHTML = htmlString.trim();
-    return div.firstChild;
-}
+function displaySeats(seats) {
+    const seatGrid = document.querySelector('.seat-grid');
+    seatGrid.style.display = 'grid';
+    seatGrid.innerHTML = '';
+    
+    // Add column headers
+    seatGrid.innerHTML = '<div class="col-label"></div>';
+    for (let i = 1; i <= 10; i++) {
+        seatGrid.innerHTML += `<div class="col-label">${i}</div>`;
+    }
 
-function addSeatClickEvents() {
-    const seats = document.querySelectorAll('.seat.available');
+    // Group seats by line
+    const seatsByLine = {};
     seats.forEach(seat => {
+        if (!seatsByLine[seat.Line]) {
+            seatsByLine[seat.Line] = [];
+        }
+        seatsByLine[seat.Line].push(seat);
+    });
+
+    // Create rows 
+    Object.keys(seatsByLine).sort().forEach(line => {
+        seatGrid.innerHTML += `<div class="row-label">${line}</div>`;
+        seatsByLine[line]
+            .sort((a, b) => parseInt(a.SeatNumber) - parseInt(b.SeatNumber))
+            .forEach(seat => {
+                const seatClass = seat.isBooked ? 'seat occupied' : 'seat available';
+                // Chỉ hiển thị số ghế (bỏ phần Line vì đã có ở row-label)
+                seatGrid.innerHTML += `
+                    <div class="${seatClass}" data-seat-id="${seat.SeatId}">
+                        <span>${seat.SeatNumber}</span>
+                    </div>`;
+            });
+    });
+
+    // Add booking summary section
+    seatGrid.innerHTML += `
+        <div class="booking-summary">
+            <div class="seat-count">Đã chọn 0 ghế</div>
+            <button class="payment-button" disabled>
+                Thanh Toán <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+    `;
+
+    // Add click events
+    const availableSeats = seatGrid.querySelectorAll('.seat.available');
+    availableSeats.forEach(seat => {
         seat.addEventListener('click', () => {
-            if (!seat.classList.contains('occupied')) {
-                seat.classList.toggle('selected');
-                updateSelectedSeatsInfo();
-            }
+            seat.classList.toggle('selected');
+            updateBookingSummary();
         });
     });
 }
 
-function updateSelectedSeatsInfo() {
+function updateBookingSummary() {
     const selectedSeats = document.querySelectorAll('.seat.selected');
-    const selectedSeatsArray = Array.from(selectedSeats).map(seat => seat.querySelector('span').textContent);
-    const totalPrice = selectedSeats.length * 75000; // Giá mỗi ghế
-
-    document.getElementById('selected-seats').textContent = selectedSeatsArray.join(', ') || 'Chưa chọn';
-    document.getElementById('total-price').textContent = `${totalPrice.toLocaleString('vi-VN')} VNĐ`;
+    const seatCount = selectedSeats.length;
     
-    // Enable/disable book button
-    const bookButton = document.getElementById('book-button');
-    bookButton.disabled = selectedSeats.length === 0;
+    const countDisplay = document.querySelector('.seat-count');
+    const paymentButton = document.querySelector('.payment-button');
+    
+    countDisplay.textContent = `Đã chọn ${seatCount} ghế`;
+    paymentButton.disabled = seatCount === 0;
+
+    // Thêm xử lý click cho nút thanh toán
+    paymentButton.onclick = () => {
+        if (seatCount > 0) {
+            // Lưu thông tin vé vào sessionStorage
+            const ticketInfo = {
+                theaterId: document.getElementById('theater-filter').value,
+                theaterName: document.getElementById('theater-filter').selectedOptions[0].text,
+                movieId: document.getElementById('movie-filter').value, 
+                movieName: document.getElementById('movie-filter').selectedOptions[0].text,
+                showtimeId: document.getElementById('showtime-filter').value,
+                showtimeText: document.getElementById('showtime-filter').selectedOptions[0].text,
+                roomId: document.getElementById('room-filter').value,
+                roomName: document.getElementById('room-filter').selectedOptions[0].text,
+                seats: Array.from(selectedSeats).map(seat => ({
+                    id: seat.dataset.seatId,
+                    number: seat.querySelector('span').textContent.trim()
+                }))
+            };
+            
+            sessionStorage.setItem('ticketInfo', JSON.stringify(ticketInfo));
+            
+            // Chuyển hướng sang trang payment
+            window.location.href = 'payment.html';
+        }
+    };
+}
+
+// API handlers
+async function bookTickets(seatIds, showtimeId, customerInfo) {
+    try {
+        showLoading();
+        const response = await fetch(`${API_BASE_URL}/bookings`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                seatIds,
+                showtimeId,
+                customerInfo
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Booking response:', result);
+        alert('Đặt vé thành công! Mã đặt chỗ: ' + result.bookingId);
+        // Reset all selections
+        resetAllSelections();
+    } catch (err) {
+        console.error('Error booking tickets:', err);
+        showError('Không thể đặt vé, vui lòng thử lại sau');
+    } finally {
+        hideLoading();
+    }
+}
+
+// Event listener for booking button
+document.getElementById('book-button').addEventListener('click', () => {
+    const selectedSeats = Array.from(document.querySelectorAll('.seat.selected'));
+    const seatIds = selectedSeats.map(seat => seat.dataset.seatId);
+    const showtimeId = document.getElementById('showtime-filter').value;
+
+    if (seatIds.length === 0) {
+        return showError('Vui lòng chọn ghế để đặt');
+    }
+
+    // Collect customer info from form
+    const customerInfo = {
+        name: document.getElementById('customer-name').value,
+        phone: document.getElementById('customer-phone').value,
+        email: document.getElementById('customer-email').value
+    };
+
+    // Validate customer info
+    if (!validateCustomerInfo(customerInfo)) {
+        return showError('Vui lòng điền đầy đủ thông tin khách hàng');
+    }
+
+    // Proceed to book tickets
+    bookTickets(seatIds, showtimeId, customerInfo);
+});
+
+function validateCustomerInfo(info) {
+    return info.name && info.phone && info.email;
 }
 
 // Thêm vào phần CSS để hiển thị ghế đẹp hơn

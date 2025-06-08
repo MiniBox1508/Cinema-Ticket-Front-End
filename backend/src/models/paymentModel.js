@@ -1,52 +1,88 @@
 const { sql } = require('../config/db');
 
 const PaymentModel = {
-    getAll: async () => {
-        const result = await sql.query`SELECT * FROM Payments`;
-        return result.recordset;
+    getAll: () => {
+        const query = 'SELECT * FROM Payments';
+        return new Promise((resolve, reject) => {
+            db.query(query, (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
     },
 
-    getById: async (id) => {
-        const result = await sql.query`
-            SELECT * FROM Payments WHERE PaymentId = ${id}`;
-        return result.recordset[0];
+    getById: (id) => {
+        const query = 'SELECT * FROM Payments WHERE PaymentId = ?';
+        return new Promise((resolve, reject) => {
+            db.query(query, [id], (err, results) => {
+                if (err) return reject(err);
+                resolve(results[0]);
+            });
+        });
     },
 
     create: async (payment) => {
-        const { PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId } = payment;
-        const result = await sql.query`
-            INSERT INTO Payments (
-                PaymentStatus, Amount, PaymentTime, 
-                PaymentMethod, UserId
-            ) VALUES (
-                ${PaymentStatus}, ${Amount}, ${PaymentTime}, 
-                ${PaymentMethod}, ${UserId}
-            );
-            SELECT SCOPE_IDENTITY() AS PaymentId;
-        `;
-        return result.recordset[0];
+        try {
+            const pool = await sql.connect();
+            const request = pool.request();
+            
+            request.input('status', sql.NVarChar, payment.PaymentStatus);
+            request.input('amount', sql.Decimal, payment.Amount);
+            request.input('time', sql.DateTime, payment.PaymentTime);
+            request.input('method', sql.NVarChar, payment.PaymentMethod);
+            request.input('userId', sql.Int, payment.UserId);
+
+            const result = await request.query(`
+                INSERT INTO Payments (
+                    PaymentStatus, 
+                    Amount, 
+                    PaymentTime, 
+                    PaymentMethod, 
+                    UserId
+                ) 
+                OUTPUT INSERTED.PaymentId
+                VALUES (
+                    @status,
+                    @amount,
+                    @time,
+                    @method,
+                    @userId
+                )
+            `);
+
+            return result.recordset[0];
+
+        } catch (error) {
+            console.error('Error in create payment:', error);
+            throw error;
+        }
     },
 
-    update: async (id, payment) => {
-        const { PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId } = payment;
-        const result = await sql.query`
-            UPDATE Payments 
-            SET PaymentStatus = ${PaymentStatus},
-                Amount = ${Amount},
-                PaymentTime = ${PaymentTime},
-                PaymentMethod = ${PaymentMethod},
-                UserId = ${UserId}
-            WHERE PaymentId = ${id}
+    update: (id, payment) => {
+        const query = `
+            UPDATE Payments
+            SET PaymentStatus = ?, Amount = ?, PaymentTime = ?, PaymentMethod = ?, UserId = ?
+            WHERE PaymentId = ?
         `;
-        return result.rowsAffected[0] > 0;
+        const { PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId } = payment;
+
+        return new Promise((resolve, reject) => {
+            db.query(query, [PaymentStatus, Amount, PaymentTime, PaymentMethod, UserId, id], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
     },
 
-    delete: async (id) => {
-        const result = await sql.query`
-            DELETE FROM Payments WHERE PaymentId = ${id}
-        `;
-        return result.rowsAffected[0] > 0;
-    }
+    delete: (id) => {
+        const query = 'DELETE FROM Payments WHERE PaymentId = ?';
+        return new Promise((resolve, reject) => {
+            db.query(query, [id], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+    },
 };
 
 module.exports = PaymentModel;

@@ -26,18 +26,26 @@ const getPaymentById = async (req, res) => {
 
 // Tạo mới một thanh toán
 const createPayment = async (req, res) => {
-    const paymentData = req.body;
+    const { paymentStatus, amount, paymentMethod, userId } = req.body;
     try {
-        const result = await PaymentModel.create(paymentData);
-        res.status(201).json({ 
-            message: 'Tạo thanh toán thành công', 
-            paymentId: result.PaymentId 
+        // Insert payment record
+        const result = await PaymentModel.create({
+            PaymentStatus: paymentStatus,
+            Amount: amount,
+            PaymentTime: new Date(),
+            PaymentMethod: paymentMethod,
+            UserId: userId
+        });
+
+        res.status(201).json({
+            message: 'Payment created successfully',
+            paymentId: result.PaymentId
         });
     } catch (err) {
         console.error('Error creating payment:', err);
-        res.status(500).json({ 
-            message: 'Lỗi khi tạo thanh toán',
-            error: err.message 
+        res.status(500).json({
+            error: 'Failed to create payment',
+            details: err.message
         });
     }
 };

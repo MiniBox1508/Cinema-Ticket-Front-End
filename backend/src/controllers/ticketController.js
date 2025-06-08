@@ -93,6 +93,23 @@ const getTicketsByShowtimeId = async (req, res) => {
     }
 };
 
+// Thêm hàm mới để lấy ghế đã đặt theo suất chiếu
+const getBookedSeatsByShowtime = async (req, res) => {
+    const { showtimeId } = req.params;
+    
+    try {
+        const bookedSeats = await TicketModel.getBookedSeatsByShowtime(showtimeId);
+        
+        res.status(200).json(bookedSeats);
+    } catch (err) {
+        console.error('Error getting booked seats:', err);
+        res.status(500).json({
+            error: 'Không thể lấy thông tin ghế đã đặt',
+            details: err.message
+        });
+    }
+};
+
 module.exports = {
     getAllTickets,
     getTicketById,
@@ -101,4 +118,5 @@ module.exports = {
     deleteTicket,
     getTicketsByUserEmail,
     getTicketsByShowtimeId,
+    getBookedSeatsByShowtime,
 };

@@ -1,56 +1,84 @@
-const { sql } = require('../config/db');
+const db = require('../config/db');
+const sql = require('mssql');
+const config = require('../config/db');
 
 const SeatModel = {
-    getAll: async () => {
-        const result = await sql.query`SELECT * FROM Seats`;
-        return result.recordset;
+    getAll: () => {
+        const query = 'SELECT * FROM Seats';
+        return new Promise((resolve, reject) => {
+            db.query(query, (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
     },
 
-    getById: async (id) => {
-        const result = await sql.query`
-            SELECT * FROM Seats WHERE SeatId = ${id}`;
-        return result.recordset[0];
+    getById: (id) => {
+        const query = 'SELECT * FROM Seats WHERE SeatId = ?';
+        return new Promise((resolve, reject) => {
+            db.query(query, [id], (err, results) => {
+                if (err) return reject(err);
+                resolve(results[0]);
+            });
+        });
     },
 
-    create: async (seat) => {
+    create: (seat) => {
+        const query = 'INSERT INTO Seats (SeatNumber, Line, RoomId) VALUES (?, ?, ?)';
         const { SeatNumber, Line, RoomId } = seat;
-        const result = await sql.query`
-            INSERT INTO Seats (SeatNumber, Line, RoomId) 
-            VALUES (${SeatNumber}, ${Line}, ${RoomId});
-            SELECT SCOPE_IDENTITY() AS SeatId;
-        `;
-        return result.recordset[0];
+        return new Promise((resolve, reject) => {
+            db.query(query, [SeatNumber, Line, RoomId], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
     },
 
-    update: async (id, seat) => {
+    update: (id, seat) => {
+        const query = 'UPDATE Seats SET SeatNumber = ?, Line = ?, RoomId = ? WHERE SeatId = ?';
         const { SeatNumber, Line, RoomId } = seat;
-        const result = await sql.query`
-            UPDATE Seats 
-            SET SeatNumber = ${SeatNumber},
-                Line = ${Line},
-                RoomId = ${RoomId}
-            WHERE SeatId = ${id}
-        `;
-        return result.rowsAffected[0] > 0;
+        return new Promise((resolve, reject) => {
+            db.query(query, [SeatNumber, Line, RoomId, id], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
     },
 
-    delete: async (id) => {
-        const result = await sql.query`
-            DELETE FROM Seats WHERE SeatId = ${id}
-        `;
-        return result.rowsAffected[0] > 0;
+    delete: (id) => {
+        const query = 'DELETE FROM Seats WHERE SeatId = ?';
+        return new Promise((resolve, reject) => {
+            db.query(query, [id], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
     },
 
     getSeatsByRoomId: async (RoomId) => {
-        const result = await sql.query`
-            SELECT s.*, 
-                   CASE WHEN t.TicketId IS NOT NULL THEN 1 ELSE 0 END as isBooked
-            FROM Seats s
-            LEFT JOIN Tickets t ON s.SeatId = t.SeatId
-            WHERE s.RoomId = ${RoomId}
-            ORDER BY s.Line, s.SeatNumber
-        `;
-        return result.recordset;
+        try {
+            const pool = await sql.connect(config);
+            const request = pool.request();
+            request.input('RoomId', sql.Int, RoomId);
+
+            const query = `
+                SELECT 
+                    SeatId,
+                    SeatNumber,
+                    Line,
+                    RoomId
+                FROM Seats
+                WHERE RoomId = @RoomId
+                ORDER BY Line, SeatNumber`;
+
+            const result = await request.query(query);
+            console.log('Found seats for room', RoomId, ':', result.recordset.length);
+            return result.recordset;
+
+        } catch (error) {
+            console.error('Error in getSeatsByRoomId:', error);
+            throw error;
+        }
     }
 };
 

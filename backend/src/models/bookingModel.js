@@ -1,20 +1,16 @@
 //bookingModel o day
 
-const db = require('../config/db'); // Kết nối cơ sở dữ liệu
+const { sql } = require('../config/db');
 
 const bookingModel = {
     // Tạo vé mới
-    create: ({ RoomId, ShowtimeId, SeatId, UserId, Status = 'pending' }) => {
-        const query = `
+    create: async ({ RoomId, ShowtimeId, SeatId, UserId, Status = 'pending' }) => {
+        const result = await sql.query`
             INSERT INTO Tickets (RoomId, ShowtimeId, SeatId, UserId, Status) 
-            VALUES (?, ?, ?, ?, ?)
-        `;  // Chuyển từ Bookings sang Tickets
-        return new Promise((resolve, reject) => {
-            db.query(query, [RoomId, ShowtimeId, SeatId, UserId, Status], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
+            VALUES (${RoomId}, ${ShowtimeId}, ${SeatId}, ${UserId}, ${Status});
+            SELECT SCOPE_IDENTITY() AS TicketId;
+        `;
+        return result.recordset[0];
     },
 
     // Cập nhật trạng thái ghế

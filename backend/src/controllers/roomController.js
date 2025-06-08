@@ -14,7 +14,7 @@ const getAllRooms = async (req, res) => {
 const getRoomById = async (req, res) => {
     try {
         const result = await sql.query`
-            SELECT * FROM Room WHERE RoomID = ${req.params.id}`;
+            SELECT * FROM Room WHERE RoomId = ${req.params.id}`;
         if (result.recordset.length > 0) {
             res.json(result.recordset[0]);
         } else {
@@ -32,11 +32,11 @@ const createRoom = async (req, res) => {
         const result = await sql.query`
             INSERT INTO Room (Name, Capacity, TheaterId) 
             VALUES (${name}, ${capacity}, ${theaterId});
-            SELECT SCOPE_IDENTITY() AS RoomID;
+            SELECT SCOPE_IDENTITY() AS RoomId;
         `;
         res.status(201).json({ 
             message: 'Tạo phòng thành công', 
-            roomId: result.recordset[0].RoomID 
+            RoomId: result.recordset[0].RoomId 
         });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -52,7 +52,7 @@ const updateRoom = async (req, res) => {
             SET Name = ${name}, 
                 Capacity = ${capacity}, 
                 TheaterId = ${theaterId} 
-            WHERE RoomID = ${req.params.id}
+            WHERE RoomId = ${req.params.id}
         `;
         if (result.rowsAffected[0] > 0) {
             res.json({ message: 'Cập nhật phòng thành công' });
@@ -68,7 +68,7 @@ const updateRoom = async (req, res) => {
 const deleteRoom = async (req, res) => {
     try {
         const result = await sql.query`
-            DELETE FROM Room WHERE RoomID = ${req.params.id}
+            DELETE FROM Room WHERE RoomId = ${req.params.id}
         `;
         if (result.rowsAffected[0] > 0) {
             res.json({ message: 'Xóa phòng thành công' });

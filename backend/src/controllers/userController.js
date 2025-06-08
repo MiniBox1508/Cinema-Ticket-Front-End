@@ -24,20 +24,42 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-    const { Name, Password, Email, Phone, Role, CreateAt, Status } = req.body;
     try {
+        const { Name, Password, Email, Phone } = req.body;
+        
+        // Validate required fields
+        if (!Name || !Password || !Email || !Phone) {
+            return res.status(400).json({ 
+                error: 'Missing required fields',
+                details: 'Name, Password, Email and Phone are required'
+            });
+        }
+
+        console.log('Creating user with data:', { Name, Email, Phone }); // Debug log
+
         const hashedPassword = await bcrypt.hash(Password, 12);
+        
         const result = await UserModel.create({ 
-            Name, hashedPassword, Email, Phone, 
-            Role, CreateAt: new Date(), Status 
+            Name, 
+            Password: hashedPassword, // Use hashedPassword here
+            Email, 
+            Phone, 
+            Role: 'user',
+            CreateAt: new Date(),
+            Status: 'active'
         });
+
         res.status(201).json({ 
-            message: 'Tạo người dùng thành công',
+            message: 'User created successfully',
             userId: result.UserId 
         });
+
     } catch (err) {
         console.error('Error creating user:', err);
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ 
+            error: 'Failed to create user',
+            details: err.message 
+        });
     }
 };
 

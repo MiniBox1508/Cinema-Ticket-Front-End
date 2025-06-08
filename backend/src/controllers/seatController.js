@@ -68,15 +68,25 @@ const deleteSeat = async (req, res) => {
 };
 // Lấy ghế của một showtime
 const getSeatsByRoomId = async (req, res) => {
-    const { roomId } = req.params;
+    const { RoomId } = req.params;
     try {
-        const seats = await SeatModel.getSeatsByRoomId(roomId);
-        if (seats.length === 0) {
-            return res.status(404).json({ message: 'No seats found for this showtimeId' });
+        console.log('Getting seats for room:', RoomId); // Debug log
+        const seats = await SeatModel.getSeatsByRoomId(RoomId);
+        
+        if (!seats || seats.length === 0) {
+            return res.status(404).json({
+                message: 'Không tìm thấy ghế nào trong phòng này'
+            });
         }
+
+        console.log('Found seats:', seats.length); // Debug log
         res.status(200).json(seats);
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch seats by showtimeId', details: err });
+        console.error('Error getting seats:', err);
+        res.status(500).json({
+            error: 'Không thể tải thông tin ghế',
+            details: err.message
+        });
     }
 };
 
